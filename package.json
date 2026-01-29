@@ -1,0 +1,36 @@
+{
+	"name": "icpc-sinchon-discord",
+	"version": "1.0.0",
+	"description": "Discord bot for ICPC Sinchon",
+	"private": true,
+	"main": "src/main.ts",
+	"type": "module",
+	"scripts": {
+		"lint": "biome check --fix --ext ts src",
+		"format": "biome format --write .",
+		"start": "bun run ."
+	},
+	"dependencies": {
+		"@sapphire/decorators": "^6.2.0",
+		"@sapphire/framework": "^5.5.0",
+		"@sapphire/plugin-api": "^8.3.1",
+		"@sapphire/plugin-logger": "^4.1.0",
+		"@skyra/env-utilities": "^2.0.1",
+		"@types/node-cron": "^3.0.11",
+		"colorette": "^2.0.20",
+		"discord.js": "^14.25.1",
+		"figlet": "^1.9.4",
+		"google-auth-library": "^10.5.0",
+		"google-spreadsheet": "^5.0.2",
+		"gradient-string": "^2.0.2",
+		"node-cron": "^4.2.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.11",
+		"@sapphire/ts-config": "^5.0.3",
+		"@types/figlet": "^1.7.0",
+		"@types/gradient-string": "^1.1.6",
+		"@types/node": "^20.19.30",
+		"typescript": "^5.9.3"
+	}
+}
