@@ -1,13 +1,19 @@
 {
-	"extends": [
-		"@sapphire/ts-config",
-		"@sapphire/ts-config/extra-strict",
-		"@sapphire/ts-config/decorators",
-		"@sapphire/ts-config/verbatim"
-	],
 	"compilerOptions": {
+		"target": "esnext",
+		"module": "esnext",
+		"moduleResolution": "bundler",
 		"rootDir": "./src",
+		"paths": {
+			"@/*": ["./src/*"]
+		},
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"skipLibCheck": true,
 		"noEmit": true
 	},
-	"include": ["src"]
+	"include": ["src/**/*"],
+	"exclude": ["node_modules"]
 }

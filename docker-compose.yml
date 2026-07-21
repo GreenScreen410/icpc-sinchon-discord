@@ -1,0 +1,9 @@
+services:
+  bot:
+    build: .
+    container_name: icpc-sinchon-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./creds.json:/usr/src/app/creds.json:ro
