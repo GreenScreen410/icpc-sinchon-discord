@@ -2,7 +2,6 @@ import { type Client, ContainerBuilder, MessageFlags, type TextChannel } from 'd
 import type { GoogleSpreadsheetWorksheet } from 'google-spreadsheet';
 import cron, { type ScheduledTask } from 'node-cron';
 import { getDoc } from '@/lib/sheets.js';
-import { logger } from '@/logger.js';
 
 type Target = 'novice' | 'advanced';
 type Results = { present: string[]; absent: string[] };
@@ -28,7 +27,7 @@ async function fetchVoiceMemberIds(client: Client, guildId: string, vcId: string
   return new Set(channel.members.keys());
 }
 
-// 헤더 이름으로 열 위치를 찾습니다. (구조가 바뀌어도 견고)
+// 헤더 이름으로 열 위치를 찾습니다.
 function findColByHeader(sheet: GoogleSpreadsheetWorksheet, header: string): number {
   for (let c = 0; c < sheet.columnCount; c++) if (toText(sheet.getCell(0, c).value) === header) return c;
   return -1;
@@ -47,18 +46,18 @@ function findTodayColumn(sheet: GoogleSpreadsheetWorksheet): number {
   return -1;
 }
 
-// 출결에서 필요한 열 위치를 찾습니다. (누락/수업일 아님이면 null)
+// 출결에서 필요한 열 위치를 찾습니다.
 function locateColumns(sheet: GoogleSpreadsheetWorksheet) {
   const idCol = findColByHeader(sheet, '유저ID');
   const nameCol = findColByHeader(sheet, '이름');
   const diffCol = findColByHeader(sheet, '수강난이도');
   if (idCol < 0 || nameCol < 0 || diffCol < 0) {
-    logger.error('출결 시트에 유저ID/이름/수강난이도 열이 없습니다.');
+    console.log('출결 시트에 유저ID/이름/수강난이도 열이 없습니다.');
     return null;
   }
   const dateCol = findTodayColumn(sheet);
   if (dateCol < 0) {
-    logger.error('출결 시트에 오늘 날짜 열이 없습니다. (수업일이 아니거나 날짜 열 누락)');
+    console.log('출결 시트에 오늘 날짜 열이 없습니다. (수업일이 아니거나 날짜 열 누락)');
     return null;
   }
   return { idCol, nameCol, diffCol, dateCol };
@@ -66,7 +65,7 @@ function locateColumns(sheet: GoogleSpreadsheetWorksheet) {
 
 type Columns = NonNullable<ReturnType<typeof locateColumns>>;
 
-// 한 행이 대상 분반이면 오늘 날짜 열에 출석/결석을 기록하고 결과를 반환합니다. (대상 아님/빈 행이면 null)
+// 한 행이 대상 분반이면 오늘 날짜 열에 출석/결석을 기록하고 결과를 반환합니다.
 function markRow(
   sheet: GoogleSpreadsheetWorksheet,
   cols: Columns,
@@ -83,7 +82,7 @@ function markRow(
   return { present, name: toText(sheet.getCell(r, cols.nameCol).value) || id };
 }
 
-// 출결 명단(해당 분반 행)을 훑어 오늘 날짜 열에 출석(1)/결석(0)을 기록합니다. 판정은 유저ID 기준.
+// 출결 명단(해당 분반 행)을 훑어 오늘 날짜 열에 출석(1)/결석(0)을 기록합니다.
 function recordAttendance(sheet: GoogleSpreadsheetWorksheet, presentIds: Set<string>, label: string): Results | null {
   const cols = locateColumns(sheet);
   if (!cols) return null;
@@ -96,7 +95,7 @@ function recordAttendance(sheet: GoogleSpreadsheetWorksheet, presentIds: Set<str
   return results;
 }
 
-// 출석 현황을 보고용 텍스트 채널에 임베드로 전송합니다.
+// 출석 현황을 보고용 텍스트 채널에 전송합니다.
 async function sendReport(client: Client, reportId: string | undefined, label: string, results: Results) {
   const reportChannel = reportId ? await client.channels.fetch(reportId).catch(() => null) : null;
   if (!reportChannel?.isTextBased()) return;
@@ -114,7 +113,7 @@ export async function runAttendanceCheck(client: Client, target: Target) {
   const { vcId, reportId, label } = getConfig(target);
 
   if (!SPREADSHEET_ID || !GUILD_ID || !vcId) {
-    logger.error('환경 변수 설정 누락');
+    console.log('환경 변수 설정 누락');
     return;
   }
 
@@ -140,15 +139,15 @@ export function scheduleAttendanceCheck(client: Client) {
     const task = cron.schedule(
       expr,
       () => {
-        runAttendanceCheck(client, target).catch((error) => logger.error(error));
+        runAttendanceCheck(client, target).catch((error) => console.log(error));
       },
-      { timezone: 'Asia/Seoul' } // 서버 TZ와 무관하게 KST 기준 (findTodayColumn도 KST)
+      { timezone: 'Asia/Seoul' }
     );
     if (!attendanceEnabled) task.stop();
     return task;
   };
 
-  // 초급 15:15, 중급 17:15 (매일)
+  // 초급 15:15, 중급 17:15
   scheduledTasks = [schedule('15 15 * * *', 'novice'), schedule('15 17 * * *', 'advanced')];
 }
 

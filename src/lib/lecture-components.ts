@@ -12,7 +12,6 @@ import {
 } from 'discord.js';
 import { DIVISION_LABEL, type Division, getLectureLink } from '@/lib/lecture-links.js';
 import { getPass } from '@/lib/roster.js';
-import { logger } from '@/logger.js';
 
 export const LECTURE_SELECT_ID = 'lecture-select';
 export const LECTURE_CONFIRM_PREFIX = 'confirm-lecture:';
@@ -28,13 +27,20 @@ export function buildLectureBoard() {
   const selectMenu = new StringSelectMenuBuilder()
     .setCustomId(LECTURE_SELECT_ID)
     .setPlaceholder('📚 수강할 주차를 선택하세요')
-    .addOptions(LECTURE_OPTIONS.map((opt) => new StringSelectMenuOptionBuilder().setLabel(opt.label).setValue(opt.value).setEmoji(opt.emoji)));
+    .addOptions(
+      LECTURE_OPTIONS.map((opt) =>
+        new StringSelectMenuOptionBuilder().setLabel(opt.label).setValue(opt.value).setEmoji(opt.emoji)
+      )
+    );
 
   return new ContainerBuilder()
     .setAccentColor(0x2fa653)
     .addTextDisplayComponents(
       (text) => text.setContent('## 📖 강의 영상'),
-      (text) => text.setContent('아래 드롭다운에서 주차를 선택하면 본인 분반(초급/중급)의 강의 영상 링크를 DM으로 보내드립니다.')
+      (text) =>
+        text.setContent(
+          '아래 드롭다운에서 주차를 선택하면 본인 분반(초급/중급)의 강의 영상 링크를 DM으로 보내드립니다.'
+        )
     )
     .addSeparatorComponents((sep) => sep.setDivider(true))
     .addActionRowComponents((row) => row.addComponents(selectMenu));
@@ -51,7 +57,10 @@ export async function handleLectureSelect(interaction: StringSelectMenuInteracti
     .setEmoji('✅')
     .setStyle(ButtonStyle.Success);
 
-  const cancelButton = new ButtonBuilder().setCustomId(`${LECTURE_CONFIRM_PREFIX}cancel`).setLabel('취소').setStyle(ButtonStyle.Secondary);
+  const cancelButton = new ButtonBuilder()
+    .setCustomId(`${LECTURE_CONFIRM_PREFIX}cancel`)
+    .setLabel('취소')
+    .setStyle(ButtonStyle.Secondary);
 
   const row = new ActionRowBuilder<ButtonBuilder>().addComponents(confirmButton, cancelButton);
 
@@ -92,10 +101,16 @@ async function provideLecture(interaction: ButtonInteraction<'cached'>, division
     await interaction.user.send(`📚 **[${DIVISION_LABEL[division]}] ${week}주차 강의 영상**\n${link}`);
     await commit(); // 수강권 1 차감
 
-    await interaction.editReply({ content: `✅ ${week}주차 강의 링크를 DM으로 전송했습니다. 남은 수강권: ${remaining - 1}개`, components: [] });
+    await interaction.editReply({
+      content: `✅ ${week}주차 강의 링크를 DM으로 전송했습니다. 남은 수강권: ${remaining - 1}개`,
+      components: []
+    });
   } catch (error) {
-    logger.error(error);
-    await interaction.editReply({ content: '❌ 강의 링크를 전송할 수 없습니다. DM 설정 또는 시트 설정을 확인해주세요.', components: [] });
+    console.log(error);
+    await interaction.editReply({
+      content: '❌ 강의 링크를 전송할 수 없습니다. DM 설정 또는 시트 설정을 확인해주세요.',
+      components: []
+    });
   }
 }
 
@@ -121,7 +136,10 @@ export async function handleLectureButton(interaction: ButtonInteraction) {
 
   const division = getMemberDivision(interaction.member);
   if (!division) {
-    await interaction.update({ content: '❌ 초급/중급 수강생 역할이 없어 링크를 보낼 수 없습니다. 운영진에게 문의해주세요.', components: [] });
+    await interaction.update({
+      content: '❌ 초급/중급 수강생 역할이 없어 링크를 보낼 수 없습니다. 운영진에게 문의해주세요.',
+      components: []
+    });
     return;
   }
 

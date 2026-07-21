@@ -10,8 +10,10 @@ export default {
   async execute(interaction: ChatInputCommandInteraction) {
     const wasEnabled = isAttendanceEnabled();
     setAttendanceEnabled(!wasEnabled);
-    const content = wasEnabled ? '🛑 자동 출석 체크를 비활성화했습니다.' : '✅ 자동 출석 체크를 활성화했습니다.';
 
-    await interaction.reply({ content, flags: MessageFlags.Ephemeral });
+    await interaction.reply({
+      content: wasEnabled ? '🛑 자동 출석 체크를 비활성화했습니다.' : '✅ 자동 출석 체크를 활성화했습니다.',
+      flags: MessageFlags.Ephemeral
+    });
   }
 };

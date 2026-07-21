@@ -26,7 +26,12 @@ interface Cols {
 }
 
 function locateCols(sheet: GoogleSpreadsheetWorksheet): Cols | null {
-  const cols = { idCol: findCol(sheet, '유저ID'), nameCol: findCol(sheet, '이름'), diffCol: findCol(sheet, '수강난이도'), passCol: findCol(sheet, '수강권') };
+  const cols = {
+    idCol: findCol(sheet, '유저ID'),
+    nameCol: findCol(sheet, '이름'),
+    diffCol: findCol(sheet, '수강난이도'),
+    passCol: findCol(sheet, '수강권')
+  };
   if (Object.values(cols).some((c) => c < 0)) {
     return null;
   }
@@ -74,7 +79,10 @@ export async function syncRoster(members: RosterMember[]): Promise<{ added: numb
       // 수강권은 비워둡니다 → 운영진이 시트에서 직접 지정
       next++;
       added++;
-    } else if (toText(sheet.getCell(existing, cols.nameCol).value) !== m.name || toText(sheet.getCell(existing, cols.diffCol).value) !== label) {
+    } else if (
+      toText(sheet.getCell(existing, cols.nameCol).value) !== m.name ||
+      toText(sheet.getCell(existing, cols.diffCol).value) !== label
+    ) {
       sheet.getCell(existing, cols.nameCol).value = m.name;
       sheet.getCell(existing, cols.diffCol).value = label;
       updated++;

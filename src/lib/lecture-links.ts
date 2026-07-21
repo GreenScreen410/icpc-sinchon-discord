@@ -26,16 +26,3 @@ export async function getLectureLink(division: Division, week: number): Promise<
   const row = rows.find((r) => r.get('분반') === DIVISION_LABEL[division] && Number(r.get('주차')) === week);
   return row?.get('링크')?.trim() || null;
 }
-
-export async function upsertLectureLink(division: Division, week: number, link: string): Promise<void> {
-  const sheet = await getLectureSheet();
-  const rows = await sheet.getRows();
-  const row = rows.find((r) => r.get('분반') === DIVISION_LABEL[division] && Number(r.get('주차')) === week);
-
-  if (row) {
-    row.set('링크', link);
-    await row.save();
-  } else {
-    await sheet.addRow({ 분반: DIVISION_LABEL[division], 주차: week, 링크: link });
-  }
-}
