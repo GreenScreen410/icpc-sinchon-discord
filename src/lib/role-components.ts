@@ -18,7 +18,8 @@ export function buildRoleBoard() {
         text.setContent(
           '닉네임을 아래 형식(`이름(아이디) 소속`)으로 설정한 뒤 버튼을 누르면, 신청한 분반(초급/중급) 역할을 자동으로 부여합니다.'
         ),
-      (text) => text.setContent(['**예시**', '- 신촌 연합: `OOO(id) 홍익대`', '- 외부인: `OOO(id) 외부인`'].join('\n'))
+      (text) =>
+        text.setContent(['**예시**', '- 신촌 연합: `정민규 (id) 홍익대`', '- 외부인: `정민규 (id) 외부인`'].join('\n'))
     )
     .addSeparatorComponents((sep) => sep.setDivider(true))
     .addActionRowComponents((row) => row.addComponents(button));
