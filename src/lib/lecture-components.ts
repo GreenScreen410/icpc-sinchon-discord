@@ -22,7 +22,7 @@ const LECTURE_OPTIONS = Array.from({ length: 10 }, (_, i) => ({
   emoji: '📚'
 }));
 
-// /버튼생성: 주차 선택 드롭다운이 담긴 메시지를 만듭니다.
+// /강의버튼: 주차 선택 드롭다운이 담긴 메시지를 만듭니다.
 export function buildLectureBoard() {
   const selectMenu = new StringSelectMenuBuilder()
     .setCustomId(LECTURE_SELECT_ID)

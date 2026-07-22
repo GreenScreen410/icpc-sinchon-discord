@@ -1,7 +1,7 @@
 import type { ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from 'discord.js';
 import attendance from '@/commands/attendance.js';
 import lectureBoard from '@/commands/lecture-board.js';
-import ping from '@/commands/ping.js';
+import roleBoard from '@/commands/role-board.js';
 import rosterSync from '@/commands/roster-sync.js';
 
 export interface Command {
@@ -10,6 +10,6 @@ export interface Command {
 }
 
 // 새 명령어를 추가하면 이 배열에만 넣어주세요.
-export const commands: Command[] = [ping, attendance, lectureBoard, rosterSync];
+export const commands: Command[] = [attendance, lectureBoard, rosterSync, roleBoard];
 
 export const commandMap = new Map(commands.map((command) => [command.data.name, command]));

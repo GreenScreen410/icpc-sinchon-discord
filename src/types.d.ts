@@ -10,5 +10,7 @@ declare namespace NodeJS {
     ADVANCED_VOICE_CHANNEL_ID: string;
     NOVICE_ROLE_ID: string;
     ADVANCED_ROLE_ID: string;
+    FORM_INTERNAL_ID: string;
+    FORM_EXTERNAL_ID: string;
   }
 }

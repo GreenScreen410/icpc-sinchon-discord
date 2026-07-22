@@ -11,6 +11,7 @@ import {
   LECTURE_CONFIRM_PREFIX,
   LECTURE_SELECT_ID
 } from '@/lib/lecture-components.js';
+import { handleRoleButton, ROLE_ASSIGN_ID } from '@/lib/role-components.js';
 
 async function handleCommand(interaction: ChatInputCommandInteraction) {
   const command = commandMap.get(interaction.commandName);
@@ -40,9 +41,10 @@ export async function handleInteraction(interaction: Interaction) {
     return;
   }
 
-  // 강의 확인/취소 버튼
+  // 버튼 (강의 확인/취소, 역할 부여)
   if (interaction.isButton()) {
     if (interaction.customId.startsWith(LECTURE_CONFIRM_PREFIX)) await handleLectureButton(interaction);
+    else if (interaction.customId === ROLE_ASSIGN_ID) await handleRoleButton(interaction);
     return;
   }
 
